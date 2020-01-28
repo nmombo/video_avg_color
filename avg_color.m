@@ -24,8 +24,7 @@ for i = 1:numFrames
         i_pcent = i_pcent+1;
         duration(i_pcent) = toc-i_toc;
         if i_pcent > 6
-            est_time_remaining = (100-i_pcent)*...
-                mean(duration(5:i_pcent))+1;
+            est_time_remaining = (100-i_pcent)*mean(duration(5:i_pcent))+1;
         else
             est_time_remaining = (100-i_pcent)*(toc-i_toc)+1;
         end
