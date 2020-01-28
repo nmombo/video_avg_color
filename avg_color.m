@@ -9,7 +9,6 @@ vid = VideoReader('HWAC 2019 Final Vimeo.mp4');
 numFrames = vid.NumFrames; % comment this out to run first 1000 frames
 
 % initialize and calculate mean color for each frame
-clear mean1
 mean1 = cell(numFrames,1);
 i_pcent = 0;
 i_toc = toc;
@@ -50,7 +49,7 @@ height = floor(width/aspect_ratio);
 dims = [width,height];
 
 % compress the frames for long videos
-clear mean2
+mean2 = cell(width,1);
 if divs > 0
     for i = 0:width-1
         red = zeros(1,2^divs);
@@ -78,3 +77,4 @@ end
 figure();
 imshow(grp)
 imwrite(grp,'avg_color_test.png')
+disp(toc-i_toc)
