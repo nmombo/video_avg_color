@@ -9,6 +9,7 @@ vid = VideoReader('HWAC 2019 Final Vimeo.mp4');
 numFrames = vid.NumFrames; % comment this out to run first 1000 frames
 
 % initialize and calculate mean color for each frame
+clear mean1
 mean1 = cell(numFrames,1);
 i_pcent = 0;
 i_toc = toc;
