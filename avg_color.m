@@ -2,7 +2,7 @@ close all
 tic
 
 % open video file
-vid = VideoReader('HWAC 2019 Final Vimeo.mp4');
+vid = VideoReader('sample_vid.mp4');
 
 % initialize video length
 % numFrames = 1000; % comment this out to run full length
