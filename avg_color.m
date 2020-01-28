@@ -14,6 +14,7 @@ numFrames = vid.NumFrames; % comment this out to run first 1000 frames
 mean1 = cell(numFrames,1);
 i_pcent = 0;
 i_toc = toc;
+duration = zeros(1,100);
 for i = 1:numFrames
     fr = read(vid,i); % read next frame
     % calculate mean of each color in frame
@@ -22,10 +23,16 @@ for i = 1:numFrames
     % progress counter
     if floor(i*100)/numFrames>i_pcent
         i_pcent = i_pcent+1;
-        est_time_remaining = (100-i_pcent)*(toc-i_toc);
-        disp(strcat({' '},'Averaging Progress:',{' '},string(i_pcent),...
-            '% Est. duration remaining:',{' '},...
-            string(est_time_remaining)));
+        duration(i_pcent) = toc-i_toc;
+        if i_pcent > 6
+            est_time_remaining = (100-i_pcent)*...
+                mean(duration(5:i_pcent));
+        else
+            est_time_remaining = (100-i_pcent)*(toc-i_toc);
+        end
+        disp(strcat('Averaging Progress:',{' '},string(i_pcent),'%'));
+        disp(strcat('Estim. seconds remaining:',{' '},...
+            string(round(est_time_remaining))));
         i_toc = toc;
     end
 end
