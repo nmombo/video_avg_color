@@ -75,6 +75,13 @@ for i = 1:width
     grp(:,i,3) = gr(i,3);
 end
 figure();
-imshow(grp)
-imwrite(grp,'avg_color_test.png')
-disp(toc-i_toc)
+imshow(grp);
+imwrite(grp,'avg_color_test.png');
+disp(toc-i_toc);
+
+% add saturation 
+grp_sat = rgb2hsv(grp);
+grp_sat(:,:,2) = grp_sat(:,:,2)./max(grp_sat(:,:,2));
+grp_sat = hsv2rgb(grp_sat);
+figure();
+imshow(grp_sat);
