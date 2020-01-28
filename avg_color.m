@@ -1,10 +1,8 @@
 close all
 tic
+
 % open video file
 vid = VideoReader('HWAC 2019 Final Vimeo.mp4');
-% test read a frame
-frame = read(vid,60*10);
-imshow(frame)
 
 % initialize video length
 % numFrames = 1000; % comment this out to run full length
@@ -26,9 +24,9 @@ for i = 1:numFrames
         duration(i_pcent) = toc-i_toc;
         if i_pcent > 6
             est_time_remaining = (100-i_pcent)*...
-                mean(duration(5:i_pcent));
+                mean(duration(5:i_pcent))+1;
         else
-            est_time_remaining = (100-i_pcent)*(toc-i_toc);
+            est_time_remaining = (100-i_pcent)*(toc-i_toc)+1;
         end
         disp(strcat('Averaging Progress:',{' '},string(i_pcent),'%'));
         disp(strcat('Estim. seconds remaining:',{' '},...
@@ -37,15 +35,42 @@ for i = 1:numFrames
     end
 end
 
-% generate the composite image
+% generate the shape of the composite image
 aspect_ratio = 21/9;
-if numFrames > 2^11
-    
+width = numFrames;
+divs = 0;
+while width > aspect_ratio*1440*2
+    if mod(width,2) ~= 0
+        floors = floors+1;
+    end
+    width = floor(width/2);
+    divs = divs+1;
+end
+height = floor(width/aspect_ratio);
+dims = [width,height];
+
+% compress the frames for long videos
+clear mean2
+if divs > 0
+    for i = 0:width-1
+        red = zeros(1,2^divs);
+        blue = zeros(1,2^divs);
+        green = zeros(1,2^divs);
+        for j = 1:2^divs
+            red(j) = mean1{i*2^divs+j}(1);
+            blue(j) = mean1{i*2^divs+j}(2);
+            green(j) = mean1{i*2^divs+j}(3);
+        end
+        mean2{i+1,1} = [mean(red),mean(blue),mean(green)];
+    end
+else
+    mean2 = mean1;
 end
 
-gr = cell2mat(mean1);
-grp = zeros(300,numFrames,3);
-for i = 1:numFrames
+% synthesize image file
+gr = cell2mat(mean2);
+grp = zeros(height,width,3);
+for i = 1:width
     grp(:,i,1) = gr(i,1);
     grp(:,i,2) = gr(i,2);
     grp(:,i,3) = gr(i,3);
