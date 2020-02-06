@@ -1,22 +1,17 @@
 import numpy as np
 import cv2
 import time
-start_time = time.time()
 
 # open video file
 filename = 'sample_vid.mp4'
 vid = cv2.VideoCapture(filename)
-if (vid.isOpened()== True):
-    print(filename + ' opened')
-else:
-    print("Error opening video stream or file")
+if (vid.isOpened()== True): print(filename + ' opened')
+else: print("Error opening video stream or file")
 
 # initialize video length
 full_length = False
-if full_length:
-    numFrames = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
-else:
-    numFrames = 1500
+if full_length: numFrames = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
+else: numFrames = 1500
 print('numFrames = ')
 print(numFrames)
 
