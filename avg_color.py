@@ -9,9 +9,9 @@ if (vid.isOpened()== True): print(filename + ' opened')
 else: print("Error opening video stream or file")
 
 # initialize video length
-full_length = False
+full_length = True
 if full_length: numFrames = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
-else: numFrames = 1500
+else: numFrames = 8000
 print('numFrames = ')
 print(numFrames)
 
@@ -24,17 +24,12 @@ for i in range(numFrames):
     # read next frame
     ret, frame = vid.read() # frame axis=0 is row, axis=1 is col, axis=2 is rgb
     # calculate mean of each color in frame
-    mean_red = np.mean(frame[:,:,0])
-    mean_gre = np.mean(frame[:,:,1])
-    mean_blu = np.mean(frame[:,:,2])
-    mean1[i] = [mean_red,mean_gre,mean_blu]
+    mean1[i] = np.array([np.mean(frame[:,:,0]),np.mean(frame[:,:,1]),np.mean(frame[:,:,2])])
     # progress counter
     if np.floor(i*100)/numFrames>i_pcent:
         duration[i_pcent] = time.time()-i_toc
-        if i_pcent > 6:
-            est_time_remaining = (100-i_pcent)*np.mean(duration[4:i_pcent])
-        else:
-            est_time_remaining = (100-i_pcent)*(time.time()-i_toc)
+        if i_pcent > 6: est_time_remaining = (100-i_pcent)*np.mean(duration[4:i_pcent])
+        else: est_time_remaining = (100-i_pcent)*(time.time()-i_toc)
         print('Averaging Progess: '+str(i_pcent)+'%')
         print('Estim. seconds remaining: '+str(np.round(est_time_remaining,1)))
         i_toc = time.time()
@@ -52,22 +47,17 @@ while width > aspect_ratio*min_height*2:
 height = np.floor(width/aspect_ratio)
 
 # compress the frames for long videos
-mean2 = np.zeros([width,3])
+mean2 = np.zeros([int(width),3])
 if divs > 0:
-    for i in range(width-1):
-        red = np.zeros(1,2^divs)
-        gre = np.zeros(1,2^divs)
-        blu = np.zeros(1,2^divs)
+    for i in range(int(width)-1):
+        vert = np.zeros([2^divs,3])
         for j in range(2^divs-1):
-            red[j] = mean1[i*2^divs+j,1]
-            gre[j] = mean1[i*2^divs+j,2]
-            blu[j] = mean1[i*2^divs+j,2]
-        mean2[i] = [np.mean(red),np.mean(gre),np.mean(blu)]
+            vert[j] = np.array([mean1[i*2^divs+j,0],mean1[i*2^divs+j,1],mean1[i*2^divs+j,2]])
+        mean2[i] = [np.mean(vert[:,0]),np.mean(vert[:,1]),np.mean(vert[:,2])]
 else:
     mean2 = mean1
 
 # synthesize image file
 grp = np.zeros([int(height),int(width),3])
-for i in range(width):
-    grp[:,i] = mean2[i]
+for i in range(int(width)): grp[:,i] = mean2[i]
 cv2.imwrite('avg_color_test_py.png',grp)
