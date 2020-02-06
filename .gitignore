@@ -1,3 +1,4 @@
 
 *.mp4
 *.asv
+.vscode/settings.json
