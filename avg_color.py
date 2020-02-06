@@ -12,11 +12,11 @@ else:
     print("Error opening video stream or file")
 
 # initialize video length
-full_length = True
+full_length = False
 if full_length:
     numFrames = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
 else:
-    numFrames = 1000
+    numFrames = 1500
 print('numFrames = ')
 print(numFrames)
 
@@ -45,3 +45,34 @@ for i in range(numFrames):
         i_toc = time.time()
         i_pcent += 1
 print('Averaging Progress: 100%')
+
+# generate the shape of the composite image
+aspect_ratio = 21/9
+min_height = 1440
+width = numFrames
+divs = 0
+while width > aspect_ratio*min_height*2:
+    width = np.floor(width/2)
+    divs += 1
+height = np.floor(width/aspect_ratio)
+
+# compress the frames for long videos
+mean2 = np.zeros([width,3])
+if divs > 0:
+    for i in range(width-1):
+        red = np.zeros(1,2^divs)
+        gre = np.zeros(1,2^divs)
+        blu = np.zeros(1,2^divs)
+        for j in range(2^divs-1):
+            red[j] = mean1[i*2^divs+j,1]
+            gre[j] = mean1[i*2^divs+j,2]
+            blu[j] = mean1[i*2^divs+j,2]
+        mean2[i] = [np.mean(red),np.mean(gre),np.mean(blu)]
+else:
+    mean2 = mean1
+
+# synthesize image file
+grp = np.zeros([int(height),int(width),3])
+for i in range(width):
+    grp[:,i] = mean2[i]
+cv2.imwrite('avg_color_test_py.png',grp)
