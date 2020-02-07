@@ -5,8 +5,13 @@ tic
 vid = VideoReader('sample_vid.mp4');
 
 % initialize video length
-% numFrames = 1000; % comment this out to run full length
-numFrames = vid.NumFrames; % comment this out to run first 1000 frames
+full_length = 0;
+test_length = 1000;
+if full_length
+    numFrames = vid.NumFrames;
+else
+    numFrames = test_length;
+end
 
 % initialize and calculate mean color for each frame
 mean1 = cell(numFrames,1);
@@ -35,6 +40,7 @@ for i = 1:numFrames
 end
 
 % generate the shape of the composite image
+shape_toc = toc;
 aspect_ratio = 21/9;
 width = numFrames;
 divs = 0;
@@ -44,8 +50,11 @@ while width > aspect_ratio*1440*2
 end
 height = floor(width/aspect_ratio);
 dims = [width,height];
+shape_duration = toc-shape_toc;
+disp(strcat('Shape duration',{' '},string(shape_duration),{' '},'s'))
 
 % compress the frames for long videos
+compression_toc = toc;
 mean2 = cell(width,1);
 if divs > 0
     for i = 0:width-1
@@ -62,6 +71,9 @@ if divs > 0
 else
     mean2 = mean1;
 end
+compression_duration = toc - compression_toc;
+disp(strcat('Compression duration',{' '},...
+    string(compression_duration),{' '},'s'))
 
 % synthesize image file
 gr = cell2mat(mean2);
