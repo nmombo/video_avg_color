@@ -76,6 +76,7 @@ disp(strcat('Compression duration',{' '},...
     string(compression_duration),{' '},'s'))
 
 % synthesize image file
+synthesis_toc = toc;
 gr = cell2mat(mean2);
 grp = zeros(height,width,3);
 for i = 1:width
@@ -86,4 +87,6 @@ end
 figure();
 imshow(grp);
 imwrite(grp,'avg_color_test.png');
-disp(toc-i_toc);
+synthesis_duration = toc-synthesis_toc;
+disp(strcat('Synthesis duration',{' '},...
+    string(synthesis_duration),{' '},'s'))

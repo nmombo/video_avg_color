@@ -22,7 +22,7 @@ i_toc = time.time()
 duration = np.zeros([100,1])
 for i in range(numFrames):
     # read next frame
-    ret, frame = vid.read() # frame axis=0 is row, axis=1 is col, axis=2 is rgb
+    _, frame = vid.read() # frame axis=0 is row, axis=1 is col, axis=2 is rgb
     # calculate mean of each color in frame
     mean1[i] = np.array([np.mean(frame[:,:,0]),np.mean(frame[:,:,1]),np.mean(frame[:,:,2])])
     # progress counter
